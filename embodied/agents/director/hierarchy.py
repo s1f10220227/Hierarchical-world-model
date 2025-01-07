@@ -80,19 +80,31 @@ class Hierarchy(tfutils.Module):
     duration = self.config.train_skill_duration if imag else (
         self.config.env_skill_duration)
     sg = lambda x: tf.nest.map_structure(tf.stop_gradient, x)
+    # ここで8stepの固定切り替え判定
     update = (carry['step'] % duration) == 0
+    
+    # dtypeで型を決めてastypeでupdateを数値にする
+    # update が False (0) の場合は x を選択し、True (1) の場合は y を選択
     switch = lambda x, y: (
         tf.einsum('i,i...->i...', 1 - update.astype(x.dtype), x) +
         tf.einsum('i,i...->i...', update.astype(x.dtype), y))
+    # 現在のスキルとManagerが選んだ新しいスキルをupdateに基づいて選択
     skill = sg(switch(carry['skill'], self.manager.actor(sg(latent)).sample()))
+    # ゴールオートエンコーダーのデコーダーでskillをnew_goalにデコード
     new_goal = self.dec({'skill': skill, 'context': self.feat(latent)}).mode()
+    # 設定ではmanager_deltaがFalseのためnew_goalは変わらない
     new_goal = (
         self.feat(latent).astype(tf.float32) + new_goal
         if self.config.manager_delta else new_goal)
+    # 現在のgoalとnew_goalをupdateに基づいて選択
     goal = sg(switch(carry['goal'], new_goal))
+    # goalと現在の特徴量との差分
     delta = goal - self.feat(latent).astype(tf.float32)
+    # Workerがgoalとdeltaに基づいて行動分布を作成
     dist = self.worker.actor(sg({**latent, 'goal': goal, 'delta': delta}))
     outs = {'action': dist}
+    # 設定で各環境のdecoderにcnn_keys: imagesをつけられる
+    # World Modelのdecoderにimagesキーがあればdeterとstochからゴールを画像に可視化できる
     if 'image' in self.wm.heads['decoder'].shapes:
       outs['log_goal'] = self.wm.heads['decoder']({
           'deter': goal, 'stoch': self.wm.rssm.get_stoch(goal),

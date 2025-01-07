@@ -64,28 +64,36 @@ class RSSM(tfutils.Module):
       raise NotImplementedError(self._initial)
 
   def observe(self, embed, action, is_first, state=None, training=False):
+    # priorとposteriorを出力する関数
+    # 軸を入れ替える
     swap = lambda x: tf.transpose(x, [1, 0] + list(range(2, len(x.shape))))
     if state is None:
       state = self.initial(action.shape[0])
     step = lambda prev, inputs: self.obs_step(prev[0], *inputs)
     inputs = swap(action), swap(embed), swap(is_first)
+    # 初期状態を設定
     start = state, state
+    # obs_stepを使って逐次的に状態を予測
     post, prior = tfutils.scan(step, inputs, start, self._unroll)
+    # 軸をもとに戻す
     post = {k: swap(v) for k, v in post.items()}
     prior = {k: swap(v) for k, v in prior.items()}
     return post, prior
 
   def imagine(self, action, state=None, training=False):
+    # priorのみを出力する関数
     swap = lambda x: tf.transpose(x, [1, 0] + list(range(2, len(x.shape))))
     if state is None:
       state = self.initial(action.shape[0])
     assert isinstance(state, dict), state
     action = swap(action)
+    # img_stepを使って逐次的に状態を予測
     prior = tfutils.scan(self.img_step, action, state, self._unroll)
     prior = {k: swap(v) for k, v in prior.items()}
     return prior
 
   def get_dist(self, state, argmax=False):
+    # 状態から確率分布を構築する関数
     if self._classes:
       logit = tf.cast(state['logit'], tf.float32)
       dist = tfd.Independent(tfutils.OneHotDist(logit), 1)
@@ -97,6 +105,8 @@ class RSSM(tfutils.Module):
     return dist
 
   def obs_step(self, prev_state, prev_action, embed, is_first):
+    # 1ステップのpostとpriorの更新を行う関数
+    # 前の状態と行動から予測を行い、観測で補正する
     prev_state, prev_action, is_first = tf.nest.map_structure(
         self._cast, (prev_state, prev_action, is_first))
     prev_state, prev_action = tf.nest.map_structure(
@@ -105,6 +115,7 @@ class RSSM(tfutils.Module):
     prev_state = tf.nest.map_structure(
         lambda x, y: x + tf.einsum('b...,b->b...', self._cast(y), is_first),
         prev_state, self.initial(len(is_first)))
+    # img_step関数を使ってpriorの予測
     prior = self.img_step(prev_state, prev_action)
     x = tf.concat([prior['deter'], embed], -1)
     x = self.get('obs_out', Dense, **self._kw)(x)
@@ -115,6 +126,7 @@ class RSSM(tfutils.Module):
     return post, prior
 
   def img_step(self, prev_state, prev_action):
+    # 1ステップのpriorの更新を行う関数
     prev_stoch = self._cast(prev_state['stoch'])
     prev_action = self._cast(prev_action)
     if self._classes:
@@ -130,6 +142,7 @@ class RSSM(tfutils.Module):
     stats = self._stats_layer('img_stats', x)
     dist = self.get_dist(stats)
     stoch = self._cast(dist.sample())
+    # s, h, mean, std
     prior = {'stoch': stoch, 'deter': deter, **stats}
     return prior
 
@@ -151,6 +164,7 @@ class RSSM(tfutils.Module):
     return deter, deter
 
   def _stats_layer(self, name, x):
+    # 状態の統計量（分布のパラメータ）を計算する層
     if self._classes:
       x = self.get(name, Dense, self._stoch * self._classes)(x)
       logit = tf.reshape(x, x.shape[:-1] + [self._stoch, self._classes])
