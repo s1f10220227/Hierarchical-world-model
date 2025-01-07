@@ -1,3 +1,5 @@
+# Hierarchical-world-model
+
 Deep Hierarchical Planning from Pixels
 ======================================
 
