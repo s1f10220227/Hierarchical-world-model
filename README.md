@@ -45,13 +45,15 @@ Running the Agent
 -----------------
 
 Dockerfile
+```sh
 docker run -it --rm --gpus all tensorflow/tensorflow:2.13.0-gpu nvidia-smi
+
 docker build -f agents/director/Dockerfile -t img . && \
 docker run -it --rm --gpus all -v ~/logdir:/logdir img \
     sh /embodied/scripts/xvfb_run.sh python3 agents/director/train.py \
     --logdir "/logdir/$(date +%Y%m%d-%H%M%S)" \
     --configs dmc_vision --task dmc_walker_walk
-
+```
 
 Either use `embodied/agents/director/Dockerfile` or follow the manual instructions below.
 
