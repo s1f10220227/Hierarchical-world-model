@@ -60,52 +60,99 @@ Either use `embodied/agents/director/Dockerfile` or follow the manual instructio
 Install dependencies:
 
 ```sh
+# omnicampus環境
+
 apt update
 apt install sudo
-
+sudo apt update
 sudo apt install python3.10-venv
-python3 -m venv venv
+python3.10 -m venv venv
 source venv/bin/activate
-
-python --version
 
 git clone https://github.com/s1f10220227/Hierarchical-world-model
 
-sudo apt-get --purge remove cuda*
-sudo apt-get --purge remove cudnn*
-sudo apt-get --purge remove libcuda*
-sudo apt-get --purge remove libcudnn*
-sudo apt-get remove --purge '^libnccl.*'
-sudo apt-get remove --purge '^libnvinfer.*'
-sudo apt-get autoremove
-sudo apt-get autoclean
-sudo apt-get update
-sudo rm -rf /usr/local/cuda*
-sudo rm -rf /usr/local/cudnn*
-
-# ダウングレードしたcuda関連のパッケージがないか確認
-ls /etc/apt/sources.list.d
-dpkg -l | grep cuda
-
+# バージョンを確認
 nvidia-smi
+nvcc --version
+dpkg -l | grep cudnn
 
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
-sudo dpkg -i cuda-keyring_1.0-1_all.deb
+# 依存関係を確認
+https://www.tensorflow.org/install/source#gpu
+https://keras.io/getting_started/
+
+https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
+# バージョンを確認
+gcc --version
+cat /proc/version
+
+# Debian / Ubuntu
+sudo apt-get --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" \
+ "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
+
+sudo apt-get autoremove --purge -V
+
+# CUDA、NVIDIA、およびcuDNN関連のパッケージの確認（削除を確認するため）
+dpkg -l | grep -i cuda
+dpkg -l | grep -i cudnn
+
+# ダウングレードされたCUDA関連パッケージがあるか確認
+ls /etc/apt/sources.list.d
+
+sudo apt-get install linux-headers-$(uname -r)
+
+# CUDAのインストール準備
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/12.2.2/local_installers/cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
+sudo cp /var/cuda-repo-ubuntu2204-12-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
 sudo apt-get update
-sudo apt-get install -y cuda-12-2
+sudo apt-get -y install cuda
 
-echo 'export PATH=/usr/local/cuda-12.2/bin:$PATH' >> ~/.bashrc
-echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.2/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
-source ~/.bashrc
+# Enable the network repository:
+echo "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" | sudo tee /etc/apt/sources.list.d/cuda-ubuntu2204-x86_64.list
+wget https://developer.download.nvidia.com/compute/cuda/12.2.2/local_installers/cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
+sudo cp /var/cuda-repo-ubuntu2204-12-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda
 
+#
+dpkg: error processing archive /tmp/apt-dpkg-install-OY44Wg/128-nvidia-utils-535_535.104.05-0ubuntu1_amd64.deb (--unpack):
+ unable to make backup link of './usr/bin/nvidia-debugdump' before installing new version: Invalid cross-device link
+
+dpkg: error processing archive /tmp/apt-dpkg-install-OY44Wg/123-nvidia-compute-utils-535_535.104.05-0ubuntu1_amd64.deb (--unpack):
+ unable to make backup link of './usr/bin/nvidia-cuda-mps-control' before installing new version: Invalid cross-device link
+
+# やってみる
+sudo apt-get -o Dpkg::Options::="--force-overwrite" install --fix-broken
+
+# だめ
+echo 'path-exclude=/usr/bin/nvidia-debugdump' | sudo tee /etc/dpkg/dpkg.cfg.d/exclude-nvidia-debugdump
+echo 'path-exclude=/usr/bin/nvidia-cuda-mps-control' | sudo tee /etc/dpkg/dpkg.cfg.d/exclude-nvidia-cuda-mps-control
+export TMPDIR=/var/tmp
+
+
+
+# 環境変数を設定
+export PATH=/usr/local/cuda-12.2/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-12.2/lib64\
+                         ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+# CUDA バージョンを確認
+nvidia-smi
 nvcc --version
 
+# cuDNN のインストール
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
 sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt-get update
-sudo apt-get -y install cudnn-cuda-12
+sudo apt-get -y install cudnn-cuda-11
 
+# 環境変数を再ロード
 source ~/.bashrc
+
+# cuDNN の状態を確認
 dpkg -l | grep cudnn
 
 
