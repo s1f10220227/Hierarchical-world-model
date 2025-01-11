@@ -153,14 +153,14 @@ dpkg -l | grep cudnn
 sudo apt remove --purge 'libcudnn9-*'
 sudo apt autoremove
 sudo apt clean
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
-sudo dpkg -i cuda-keyring_1.1-1_all.deb
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
+sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub
+sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
 sudo apt-get update
-sudo apt-get -y install cudnn-cuda-11
+sudo apt-get install libcudnn8=8.6.0.163-1+cuda11.8
+sudo apt-get install libcudnn8-dev=8.6.0.163-1+cuda11.8
 ```
-
-環境変数を再ロード
-source ~/.bashrc
 
 cuDNNのバージョンを確認
 ```sh
@@ -191,12 +191,16 @@ export TF_FUNCTION_JIT_COMPILE_DEFAULT=1
 export XLA_PYTHON_CLIENT_MEM_FRACTION=0.8
 ```
 
-RuntimeErrorのとき
-tensorflowとkerasのバージョンの依存関係を確認
+```sh
+環境変数を再ロード
+source ~/.bashrc
+```
+
 
 Train agent:
 
 embodiedにいるとき
+embodied/agents/director/configs.yamlを見てで環境とタスクを選ぶ
 ```sh
 sh scripts/xvfb_run.sh python3 agents/director/train.py   
     --logdir "/logdir/$(date +%Y%m%d-%H%M%S)"   
@@ -204,6 +208,9 @@ sh scripts/xvfb_run.sh python3 agents/director/train.py
     --task dmc_walker_walk
 
 ```
+
+RuntimeErrorのとき
+tensorflowとkerasのバージョンの依存関係を確認
 
 See `agents/director/configs.yaml` for available flags and
 `embodied/envs/__init__.py` for available envs.
