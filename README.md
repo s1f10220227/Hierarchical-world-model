@@ -169,6 +169,8 @@ cuDNNのバージョンを確認
 ```sh
 dpkg -l | grep cudnn
 ```
+
+必要なパッケージのインストール
 ```sh
 sudo apt update
 sudo apt install -y \
