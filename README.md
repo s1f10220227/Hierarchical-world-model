@@ -44,7 +44,7 @@ For more information:
 Running the Agent
 -----------------
 
-Dockerfile
+Dockerfileの場合
 ```sh
 docker run -it --rm --gpus all tensorflow/tensorflow:2.13.0-gpu nvidia-smi
 
@@ -55,11 +55,9 @@ docker run -it --rm --gpus all -v ~/logdir:/logdir img \
     --configs dmc_vision --task dmc_walker_walk
 ```
 
-Either use `embodied/agents/director/Dockerfile` or follow the manual instructions below.
-
 Install dependencies:
-
-omnicampus環境の場合
+Dockerを使わない場合
+今回は(omnicampus環境)
 
 ```sh
 apt update
@@ -135,7 +133,7 @@ export PATH=/usr/local/cuda-12.2/bin${PATH:+:${PATH}}
 export LD_LIBRARY_PATH=/usr/local/cuda-12.2/lib64\
                          ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 ```
-# CUDA バージョンを確認
+CUDA バージョンを確認
 ```sh
 nvidia-smi
 nvcc --version
@@ -157,10 +155,10 @@ sudo apt-get update
 sudo apt-get -y install cudnn-cuda-11
 ```
 
-# 環境変数を再ロード
+環境変数を再ロード
 source ~/.bashrc
 
-# cuDNNのバージョンを確認
+cuDNNのバージョンを確認
 ```sh
 dpkg -l | grep cudnn
 ```
@@ -170,7 +168,7 @@ sudo apt install -y \
   ffmpeg git python3-pip vim wget unrar xvfb \
   libegl1-mesa libopengl0 libosmesa6 libgl1-mesa-glx libglfw3
 ```
-# Atari環境のセットアップスクリプトを実行
+Atari環境のセットアップスクリプトを実行
 ```sh
 cd Hierarchical-world-model/embodied/
 sh scripts/install-atari.sh
