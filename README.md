@@ -177,6 +177,7 @@ Atari環境のセットアップスクリプトを実行
 cd Hierarchical-world-model/embodied/
 sh scripts/install-atari.sh
 ```
+パッケージのインストール
 ```sh
 cd ..
 pip install --no-cache-dir -r requirements.txt
@@ -202,11 +203,11 @@ Train agent:
 embodiedにいるとき
 embodied/agents/director/configs.yamlを見てで環境とタスクを選ぶ
 ```sh
-sh scripts/xvfb_run.sh python3 agents/director/train.py   
-    --logdir "/logdir/$(date +%Y%m%d-%H%M%S)"   
-    --configs dmc_vision 
-    --task dmc_walker_walk
-
+sh scripts/xvfb_run.sh \
+  python3 agents/director/train.py \
+  --logdir "/logdir/$(date +%Y%m%d-%H%M%S)" \
+  --configs dmc_vision \
+  --task dmc_walker_walk
 ```
 
 RuntimeErrorのとき
