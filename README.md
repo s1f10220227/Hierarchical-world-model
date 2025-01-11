@@ -177,6 +177,7 @@ Atari環境のセットアップスクリプトを実行
 cd Hierarchical-world-model/embodied/
 sh scripts/install-atari.sh
 ```
+パッケージのインストール
 ```sh
 cd ..
 pip install --no-cache-dir -r requirements.txt
