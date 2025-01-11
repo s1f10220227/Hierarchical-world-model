@@ -213,6 +213,11 @@ sh scripts/xvfb_run.sh \
   --configs dmc_vision \
   --task dmc_walker_walk
 ```
+結果の確認
+```sh
+tensorboard --logdir ~/logdir
+```
+
 
 RuntimeErrorのとき
 tensorflowとkerasのバージョンの依存関係を確認
