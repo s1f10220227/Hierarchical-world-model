@@ -103,11 +103,11 @@ ls /usr/local/
 sudo update-alternatives --config cuda
 ```
 
-依存関係を確認
-https://www.tensorflow.org/install/source#gpu
-https://keras.io/getting_started/
-https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
-https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html
+依存関係を確認  
+https://www.tensorflow.org/install/source#gpu  
+https://keras.io/getting_started/  
+https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html  
+https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html  
 
 
 ```sh
@@ -125,7 +125,7 @@ sudo apt-get update
 sudo apt-get -y install cuda-toolkit-11-8
 ```
 
-注意: driverを消さない場合はtoolkitをつける
+注意: driverを消さない場合はtoolkitをつける  
 https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#meta-packages
 
 環境変数を設定
