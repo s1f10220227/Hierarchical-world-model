@@ -131,8 +131,7 @@ https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#meta-packages
 環境変数を設定
 ```sh
 export PATH=/usr/local/cuda-11.8/bin${PATH:+:${PATH}}
-export LD_LIBRARY_PATH=/usr/local/cuda-11.8/lib64\
-                         ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-11.8/lib64:${LD_LIBRARY_PATH}
 ```
 CUDA バージョンを確認
 ```sh
