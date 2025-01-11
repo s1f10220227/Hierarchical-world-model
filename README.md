@@ -157,13 +157,23 @@ sudo apt remove --purge 'libcudnn9-*'
 sudo apt autoremove
 sudo apt clean
 ```
-必要に応じて、インストールパスや公開鍵名を実際の環境に合わせて修正してください。
+パスや鍵名を修正してください。
 ```sh
 sudo dpkg -i <path/to/cudnn.deb>
 sudo cp /var/cudnn-local-repo-*/<key-file-name> /usr/share/keyrings/
 sudo apt update
 sudo apt-get install libcudnn8=8.6.0.163-1+cuda11.8
 sudo apt-get install libcudnn8-dev=8.6.0.163-1+cuda11.8
+```
+cuDNNのバージョンを確認
+```sh
+dpkg -l | grep cudnn
+```
+```sh
+sudo apt update
+sudo apt install -y \
+  ffmpeg git python3-pip vim wget unrar xvfb \
+  libegl1-mesa libopengl0 libosmesa6 libgl1-mesa-glx libglfw3
 ```
 Atari環境のセットアップスクリプトを実行
 ```sh
