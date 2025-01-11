@@ -144,7 +144,11 @@ CUDAを切り替えたい場合
 sudo update-alternatives --config cuda
 ```
 
-cuDNN のインストール
+cuDNN(8.6.0.)のインストール
+
+https://developer.nvidia.com/rdp/cudnn-archive
+
+cuDNNのバージョンを確認
 ```sh
 dpkg -l | grep cudnn
 ```
@@ -152,24 +156,15 @@ dpkg -l | grep cudnn
 sudo apt remove --purge 'libcudnn9-*'
 sudo apt autoremove
 sudo apt clean
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
-sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
-sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub
-sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
-sudo apt-get update
+```
+以下のコマンドを実行して、指定したバージョンの cuDNN をインストールしてください。
+必要に応じて、インストールパスや公開鍵名を実際の環境に合わせて修正してください。
+```sh
+sudo dpkg -i <path/to/cudnn.deb>
+sudo cp /var/cudnn-local-repo-*/<key-file-name> /usr/share/keyrings/
+sudo apt update
 sudo apt-get install libcudnn8=8.6.0.163-1+cuda11.8
 sudo apt-get install libcudnn8-dev=8.6.0.163-1+cuda11.8
-```
-
-cuDNNのバージョンを確認
-```sh
-dpkg -l | grep cudnn
-```
-```sh
-sudo apt update
-sudo apt install -y \
-  ffmpeg git python3-pip vim wget unrar xvfb \
-  libegl1-mesa libopengl0 libosmesa6 libgl1-mesa-glx libglfw3
 ```
 Atari環境のセットアップスクリプトを実行
 ```sh
