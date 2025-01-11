@@ -199,11 +199,11 @@ Train agent:
 
 embodiedにいるとき
 ```sh
-sh scripts/xvfb_run.sh python3 agents/director/train.py   
-    --logdir "/logdir/$(date +%Y%m%d-%H%M%S)"   
-    --configs dmc_vision 
-    --task dmc_walker_walk
-
+sh scripts/xvfb_run.sh \
+  python3 agents/director/train.py \
+  --logdir "/logdir/$(date +%Y%m%d-%H%M%S)" \
+  --configs dmc_vision \
+  --task dmc_walker_walk
 ```
 
 See `agents/director/configs.yaml` for available flags and
