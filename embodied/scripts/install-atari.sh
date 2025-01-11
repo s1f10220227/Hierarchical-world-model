@@ -6,8 +6,8 @@ apt-get install -y wget
 apt-get install -y unrar
 apt-get clean
 
-pip3 install --no-cache-dir gym
-pip3 install --no-cache-dir atari-py
+pip3 install --no-cache-dir gym==0.26.0
+pip3 install --no-cache-dir atari-py==0.2.9
 pip3 install --no-cache-dir opencv-python
 
 wget -L -nv http://www.atarimania.com/roms/Roms.rar

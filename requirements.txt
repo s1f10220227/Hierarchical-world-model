@@ -1,13 +1,13 @@
-# atari-py
+# atari-py install-atari.sh
 cloudpickle
 crafter
 dm-sonnet
 dm_control
-# gym
+# gym install-atari.sh
 numpy
 opencv-python
 rich
 ruamel.yaml
-tensorflow==2.15.0
-keras==2.15.0
-tensorflow_probability
+tensorflow==2.13.0
+keras==2.13.1
+tensorflow_probability==0.21.0

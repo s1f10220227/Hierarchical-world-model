@@ -59,129 +59,143 @@ Either use `embodied/agents/director/Dockerfile` or follow the manual instructio
 
 Install dependencies:
 
-```sh
-# omnicampus環境
+omnicampus環境の場合
 
+```sh
 apt update
 apt install sudo
 sudo apt update
-sudo apt install python3.10-venv
+sudo apt install -y python3.10-venv
 python3.10 -m venv venv
 source venv/bin/activate
+```
 
+CUDAを入れる前に(一応)
+```sh
+sudo apt-get update
+sudo apt-get install -y dialog
+sudo apt-get install -y kmod
+```
+
+```sh
 git clone https://github.com/s1f10220227/Hierarchical-world-model
+```
 
-# バージョンを確認
+Ubuntuのバージョンを確認
+```sh
+cat /etc/os-release
+arch
+uname -r
+gcc --version
+cat /proc/version
+```
+
+バージョンを確認
+```sh
 nvidia-smi
 nvcc --version
 dpkg -l | grep cudnn
+```
 
-# 依存関係を確認
+```sh
+ls /usr/local/ -la
+ls /usr/local/
+sudo update-alternatives --config cuda
+```
+
+依存関係を確認
 https://www.tensorflow.org/install/source#gpu
 https://keras.io/getting_started/
-
 https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
-# バージョンを確認
-gcc --version
-cat /proc/version
+https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html
 
-# Debian / Ubuntu
-sudo apt-get --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" \
- "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
 
-sudo apt-get autoremove --purge -V
-
-# CUDA、NVIDIA、およびcuDNN関連のパッケージの確認（削除を確認するため）
-dpkg -l | grep -i cuda
-dpkg -l | grep -i cudnn
-
-# ダウングレードされたCUDA関連パッケージがあるか確認
-ls /etc/apt/sources.list.d
-
+```sh
 sudo apt-get install linux-headers-$(uname -r)
+```
 
-# CUDAのインストール準備
+CUDAのインストール
+```sh
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
 sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
-wget https://developer.download.nvidia.com/compute/cuda/12.2.2/local_installers/cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
-sudo dpkg -i cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
-sudo cp /var/cuda-repo-ubuntu2204-12-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb
+sudo cp /var/cuda-repo-ubuntu2204-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
 sudo apt-get update
 sudo apt-get -y install cuda
+sudo apt-get -y install cuda-toolkit-11-8
+```
 
-# Enable the network repository:
-echo "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" | sudo tee /etc/apt/sources.list.d/cuda-ubuntu2204-x86_64.list
-wget https://developer.download.nvidia.com/compute/cuda/12.2.2/local_installers/cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
-sudo dpkg -i cuda-repo-ubuntu2204-12-2-local_12.2.2-535.104.05-1_amd64.deb
-sudo cp /var/cuda-repo-ubuntu2204-12-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
-sudo apt-get update
-sudo apt-get -y install cuda
+注意: driverを消さない場合はtoolkitをつける
+https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#meta-packages
 
-#
-dpkg: error processing archive /tmp/apt-dpkg-install-OY44Wg/128-nvidia-utils-535_535.104.05-0ubuntu1_amd64.deb (--unpack):
- unable to make backup link of './usr/bin/nvidia-debugdump' before installing new version: Invalid cross-device link
-
-dpkg: error processing archive /tmp/apt-dpkg-install-OY44Wg/123-nvidia-compute-utils-535_535.104.05-0ubuntu1_amd64.deb (--unpack):
- unable to make backup link of './usr/bin/nvidia-cuda-mps-control' before installing new version: Invalid cross-device link
-
-# やってみる
-sudo apt-get -o Dpkg::Options::="--force-overwrite" install --fix-broken
-
-# だめ
-echo 'path-exclude=/usr/bin/nvidia-debugdump' | sudo tee /etc/dpkg/dpkg.cfg.d/exclude-nvidia-debugdump
-echo 'path-exclude=/usr/bin/nvidia-cuda-mps-control' | sudo tee /etc/dpkg/dpkg.cfg.d/exclude-nvidia-cuda-mps-control
-export TMPDIR=/var/tmp
-
-
-
-# 環境変数を設定
+環境変数を設定
+```sh
 export PATH=/usr/local/cuda-12.2/bin${PATH:+:${PATH}}
 export LD_LIBRARY_PATH=/usr/local/cuda-12.2/lib64\
                          ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-
+```
 # CUDA バージョンを確認
+```sh
 nvidia-smi
 nvcc --version
+```
 
-# cuDNN のインストール
+CUDAを切り替えたい場合
+```sh
+sudo update-alternatives --config cuda
+```
+
+cuDNN のインストール
+```sh
+dpkg -l | grep cudnn
+```
+```sh
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
 sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt-get update
 sudo apt-get -y install cudnn-cuda-11
+```
 
 # 環境変数を再ロード
 source ~/.bashrc
 
-# cuDNN の状態を確認
+# cuDNNのバージョンを確認
+```sh
 dpkg -l | grep cudnn
-
-
+```
+```sh
 sudo apt update
 sudo apt install -y \
   ffmpeg git python3-pip vim wget unrar xvfb \
   libegl1-mesa libopengl0 libosmesa6 libgl1-mesa-glx libglfw3
-
+```
 # Atari環境のセットアップスクリプトを実行
+```sh
+cd Hierarchical-world-model/embodied/
 sh scripts/install-atari.sh
-
+```
+```sh
+cd ..
 pip install --no-cache-dir -r requirements.txt
-
-# MuJoCo GL設定
+```
+MuJoCo GL設定
+```sh
 export MUJOCO_GL=egl
-
-# TensorFlowとXLA設定
+```
+TensorFlowとXLA設定
+```sh
 export TF_FUNCTION_JIT_COMPILE_DEFAULT=1
 export XLA_PYTHON_CLIENT_MEM_FRACTION=0.8
-
-# RuntimeErrorのとき
-tensorflowとkerasのバージョンの依存関係を修正
-
 ```
+
+RuntimeErrorのとき
+tensorflowとkerasのバージョンの依存関係を確認
 
 Train agent:
 
+embodiedにいるとき
 ```sh
-# embodiedにいるとき
 sh scripts/xvfb_run.sh python3 agents/director/train.py   
     --logdir "/logdir/$(date +%Y%m%d-%H%M%S)"   
     --configs dmc_vision 
