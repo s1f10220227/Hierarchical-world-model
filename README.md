@@ -56,7 +56,9 @@ docker run -it --rm --gpus all -v ~/logdir:/logdir img \
 ```
 
 Install dependencies:
+
 Dockerを使わない場合
+
 今回は(omnicampus環境)
 
 ```sh
