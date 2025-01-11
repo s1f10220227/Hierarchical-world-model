@@ -157,7 +157,6 @@ sudo apt remove --purge 'libcudnn9-*'
 sudo apt autoremove
 sudo apt clean
 ```
-以下のコマンドを実行して、指定したバージョンの cuDNN をインストールしてください。
 必要に応じて、インストールパスや公開鍵名を実際の環境に合わせて修正してください。
 ```sh
 sudo dpkg -i <path/to/cudnn.deb>
@@ -185,9 +184,8 @@ TensorFlowとXLA設定
 export TF_FUNCTION_JIT_COMPILE_DEFAULT=1
 export XLA_PYTHON_CLIENT_MEM_FRACTION=0.8
 ```
-
-```sh
 環境変数を再ロード
+```sh
 source ~/.bashrc
 ```
 
