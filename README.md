@@ -9,16 +9,7 @@ Official implementation of the [Director][project] algorithm in TensorFlow 2.
 
 ![Director Internal Goals](https://github.com/danijar/director/raw/main/media/header.gif)
 
-If you find this code useful, please reference in your paper:
 
-```
-@article{hafner2022director,
-  title={Deep Hierarchical Planning from Pixels},
-  author={Hafner, Danijar and Lee, Kuang-Huei and Fischer, Ian and Abbeel, Pieter},
-  journal={Advances in Neural Information Processing Systems},
-  year={2022}
-}
-```
 
 How does Director work?
 -----------------------
